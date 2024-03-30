@@ -27,6 +27,7 @@ class PostManager extends Component
     }
     public function closeModal()
     {
+        $this->resetInputFields();
         $this->isOpen = false;
     }
     public function store()
@@ -35,12 +36,24 @@ class PostManager extends Component
             'title' => 'required',
             'body' => 'required',
         ]);
-        dd($validatedData);
-        Post::create($validatedData);
-
-        session()->flash('message', 'Post created successfully.');
+        Post::updateOrCreate(
+            ['id' => $this->postId],
+            [
+                'title' => $this->title,
+                'body' => $this->body,
+            ],
+        );
+        // Post::create($validatedData);
+        session()->flash('message', $this->postId ? 'Post updated successfully.' : 'Post created successfully.');
 
         $this->closeModal();
+        $this->resetInputFields();
+        return $this->redirect('/post-manager');
+    }
+    public function cancel()
+    {
+        $this->updateMode = false;
+        $this->resetInputFields();
     }
     public function edit($id)
     {
@@ -51,29 +64,17 @@ class PostManager extends Component
         $this->updateMode = true;
         $this->openModal();
     }
-    public function update()
-    {
-        $validatedData = $this->validate([
-            'title' => 'required',
-            'body' => 'required',
-        ]);
 
-        Post::find($this->postId)->update($validatedData);
-
-        session()->flash('message', 'Post updated successfully.');
-
-        $this->closeModal();
-    }
     public function delete($id)
     {
         Post::find($id)->delete();
         session()->flash('message', 'Post deleted successfully.');
     }
-
     private function resetInputFields()
     {
         $this->title = '';
         $this->body = '';
+        $this->postId = null;
         $this->updateMode = false;
     }
 }

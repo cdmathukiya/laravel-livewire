@@ -15,9 +15,6 @@
     <div class="col-md-12">
         <div class="card">
             <div class="card-body">
-                {{-- @if (!$addMode)
-                    <button wire:click="addMode()" class="btn btn-primary btn-sm float-right">Add New Post</button>
-                @endif --}}
                 <div class="table-responsive">
                     <table class="table">
                         <thead>
